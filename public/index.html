@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home Page</title>
+        
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <h1>Welcome to the Home Page</h1>
+        <p>We are happy to see you here. Wish you a good day!</p>
+        <script>
+            fetch("http://localhost:3000/users") // Adjust the URL as per your setup
+                .then(response => response.json())
+                .then(users => {
+                    let table = document.createElement("table");
+                    let headerRow = document.createElement("tr");
+                    table.setAttribute("style", "border: 2px solid black; border-collapse: collapse;");
+                    let idHeader = document.createElement("th");
+                    idHeader.textContent = "E-mail";
+                    let nameHeader = document.createElement("th");
+                    nameHeader.textContent = "Name";
+        
+                    headerRow.appendChild(idHeader);
+                    headerRow.appendChild(nameHeader);
+                    table.appendChild(headerRow);
+        
+                    users.forEach(user => {
+                        let row = document.createElement("tr");
+        
+                        let idCol = document.createElement("td");
+                        idCol.textContent = user.email;
+                        let nameCol = document.createElement("td");
+                        nameCol.textContent = user.name;
+                        idCol.setAttribute("style", "border: 2px solid black; border-collapse: collapse;");
+                        nameCol.setAttribute("style", "border: 2px solid black; border-collapse: collapse;");
+                        row.appendChild(idCol);
+                        row.appendChild(nameCol);
+                        row.setAttribute("style", "border: 2px solid black; border-collapse: collapse;");
+                        table.appendChild(row);
+                    });
+        
+                    document.body.appendChild(table);
+                })
+                .catch(error => console.error("Error fetching users:", error));
+        </script>
+        
+    </body>
+</html>
