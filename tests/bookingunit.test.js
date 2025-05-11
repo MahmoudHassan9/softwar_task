@@ -27,7 +27,7 @@ describe("POST /bookings", () => {
     const room = await Room.create({ name: "Room 1", price: 100,description:"good" });
 
     const res = await request(app)
-      .post("/bookings") 
+      .post("/bookRoom") 
       .send({
         bookingRooms: [
             {

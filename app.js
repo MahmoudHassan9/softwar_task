@@ -1,6 +1,4 @@
-const e = require("express")
 const express  = require("express") //import package
-const users = require('./models/Rooms')
 const app = express()// execute package
 const path = require('path')//is a built-in Node.js module for working with file and directory paths.
 const route=require("./routes/roomRoutes");
@@ -9,12 +7,21 @@ const cors=require("cors");
 const mongoose=require("mongoose");
 const errorHandler=require("./util/error-handler");
 const bookingRoute=require('./routes/bookingRoutes');
-const sum=require('./util/sum');
+const helmet = require("helmet"); 
 require("dotenv/config");
-//how to controll the webpage
-// app.get('/',(req,res)=>{
-//     res.send("<h1>hello</>")
-// })
+const rateLimit = require('express-rate-limit');
+
+// Apply to all requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply to all routes
+app.use(limiter);
 
 // to call our html page
 //any files inside the public directory an be accessed directly in the browser.
@@ -28,6 +35,10 @@ app.get('/',(req,res)=>{
 })
 
 
+
+app.use(helmet());
+
+app.use(cors());
 
 //middleware 
 app.use(express.json()); // ✅ This is required to parse JSON requests

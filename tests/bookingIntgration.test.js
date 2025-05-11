@@ -50,7 +50,7 @@ afterAll(async () => {
 describe('Booking Routes Integration Testing', () => {
 
     it('should create a new booking', async () => {
-        const res = await request(app).post('/bookings').send({
+        const res = await request(app).post('/bookRoom').send({
             bookingRooms: [
                 {
                     room: room._id,
@@ -69,7 +69,7 @@ describe('Booking Routes Integration Testing', () => {
     });
 
     it('should fetch all bookings', async () => {
-        const res = await request(app).get('/bookings');
+        const res = await request(app).get('/allBookingRooms');
         expect(res.status).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
     });
