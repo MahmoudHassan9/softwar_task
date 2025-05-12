@@ -7,11 +7,11 @@ describe('Performance Tests', () => {
 
   it('GET /products - should respond under 20000ms', async () => {
     const start = performance.now();
-    const res = await request(app).get('/products');
+    const res = await request(app).get('/rooms/getRooms');
     const end = performance.now();
 
     const responseTime = end - start;
-    console.log(`GET /products took ${responseTime.toFixed(2)} ms`);
+    console.log(`GET /rooms took ${responseTime.toFixed(2)} ms`);
 
     expect(res.statusCode).toBe(200);
     expect(responseTime).toBeLessThan(maxResponseTime);

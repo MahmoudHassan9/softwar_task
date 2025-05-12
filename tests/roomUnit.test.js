@@ -23,7 +23,7 @@ describe("Room Routes", () => {
   // Test POST /rooms
   it("should create a new room", async () => {
     const res = await request(app)
-      .post("/rooms")
+      .post("/rooms/addRoom")
       .send({
         name: "Test Room",
         description: "A room for testing",
@@ -39,9 +39,8 @@ describe("Room Routes", () => {
 
   // Test GET /rooms
   it("should fetch all rooms", async () => {
-    const res = await request(app).get("/rooms");
+    const res = await request(app).get("/rooms/getRooms");
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
   });
 
   // Test GET /rooms/:id

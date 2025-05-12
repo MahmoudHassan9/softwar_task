@@ -1,8 +1,8 @@
 const request = require('supertest');
-const app = require('../app');  
+const app = require('../app');
 const mongoose = require('mongoose');
-const  Booking  = require('../models/booking');
-const  BookingRoom  = require('../models/booking-Room');
+const Booking = require('../models/booking');
+const BookingRoom = require('../models/booking-Room');
 const User = require('../models/users');
 const Rooms = require('../models/Rooms');
 
@@ -50,7 +50,7 @@ afterAll(async () => {
 describe('Booking Routes Integration Testing', () => {
 
     it('should create a new booking', async () => {
-        const res = await request(app).post('/bookRoom').send({
+        const res = await request(app).post('/bookings/bookRoom').send({
             bookingRooms: [
                 {
                     room: room._id,
@@ -58,18 +58,18 @@ describe('Booking Routes Integration Testing', () => {
                     user: user._id
                 }
             ],
-            phone: '01020202020',
+            phone: '01065618744',
             status: 'Pending',
             user: user._id
         });
 
         expect(res.status).toBe(201);
         expect(res.body).toHaveProperty('_id');
-        expect(res.body.totalPrice).toBe(300); 
+        expect(res.body.totalPrice).toBe(300);
     });
 
     it('should fetch all bookings', async () => {
-        const res = await request(app).get('/allBookingRooms');
+        const res = await request(app).get('/bookings/allBookingRooms');
         expect(res.status).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
     });
@@ -103,4 +103,61 @@ describe('Booking Routes Integration Testing', () => {
         expect(res.status).toBe(201);
         expect(res.body.totalPrice).toBe(150); // Price after removing 1 night
     });
+
+
+    it('should return 404 when trying to update a non-existent booking', async () => {
+        const fakeId = new mongoose.Types.ObjectId();
+        const res = await request(app).put(`/bookings/${fakeId}`).send({ status: 'Cancelled' });
+
+        expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if user has no bookings', async () => {
+        await Booking.deleteMany({ user: user._id });
+        const res = await request(app).get(`/bookings/get/userBookings/${user._id}`);
+
+        expect(res.status).toBe(404);
+        expect(res.text).toBe('No bookings found');
+    });
+
+
+    it('should update existing booking if one already exists for user', async () => {
+        // Add a room again to the existing booking
+        const res = await request(app).post('/bookings/bookRoom').send({
+            bookingRooms: [
+                {
+                    room: room._id,
+                    nights: 1,
+                    user: user._id
+                }
+            ],
+            phone: '01065618744',
+            status: 'Pending',
+            user: user._id
+        });
+
+        expect(res.status).toBe(201);
+        expect(res.body).toHaveProperty('_id');
+        expect(res.body.bookingRooms.length).toBeGreaterThan(0);
+    });
+
+    it('should return 404 when deleting a booking that does not exist', async () => {
+        const fakeUser = await User.create({
+            name: 'Another User',
+            email: 'another@example.com',
+            passwordHash: '123',
+            phone: '999999999'
+        });
+
+        const res = await request(app).delete('/bookings').send({
+            user: fakeUser._id,
+            bookingRooms: [{ room: room._id, nights: 1 }]
+        });
+
+        expect(res.status).toBe(404);
+        expect(res.text).toBe('Booking not found');
+    });
+
+
+
 });

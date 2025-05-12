@@ -23,26 +23,26 @@ afterAll(async () => {
 
 describe("POST /bookings", () => {
   it("should create a new booking", async () => {
-    const user = await User.create({ name: "test", email: "test@test.com", passwordHash: "hashed" ,phone:"65462309"});
-    const room = await Room.create({ name: "Room 1", price: 100,description:"good" });
+    const user = await User.create({ name: "test", email: "test@test.com", passwordHash: "hashed", phone: "65462309" });
+    const room = await Room.create({ name: "Room 1", price: 100, description: "good" });
 
     const res = await request(app)
-      .post("/bookRoom") 
+      .post("/bookings/bookRoom")
       .send({
         bookingRooms: [
-            {
-                room: room._id,
-                nights: 2,
-                user: user._id
-            }
+          {
+            room: room._id,
+            nights: 2,
+            user: user._id
+          }
         ],
         phone: '01020202020',
         status: 'Pending',
         user: user._id
-    });
+      });
 
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty("_id");
-    expect(res.body.totalPrice).toBe(200); 
+    expect(res.body.totalPrice).toBe(200);
   });
 });

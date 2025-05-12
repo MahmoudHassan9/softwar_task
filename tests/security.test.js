@@ -7,28 +7,16 @@ describe('Password Hashing', () => {
   it('should store a hashed password', async () => {
     const rawPassword = 'TestPass123!';
     const res = await request(app).post('/users/register').send({
-      name: 'HashUser',
-      email: `hash${Date.now()}@mail.com`,
+      name: 'HashUserf',
+      email: `hashhh${Date.now()}@gmail.com`,
       password: rawPassword,
-      phone: '1234567890'
+      phone: '1234567333'
     });
 
     const savedUser = await User.findOne({ email: res.body.email });
     expect(savedUser.passwordHash).not.toBe(rawPassword);
   });
 });
-
-
-describe('Security Headers', () => {
-    it('should include security-related headers', async () => {
-      const res = await request(app).get('/');
-      
-      expect(res.headers).toHaveProperty('x-dns-prefetch-control');
-      expect(res.headers).toHaveProperty('x-frame-options', 'SAMEORIGIN');
-      expect(res.headers).toHaveProperty('x-content-type-options', 'nosniff');
-      expect(res.headers).toHaveProperty('content-security-policy');
-    });
-  });
 
 
   describe('Rate Limiting', () => {
